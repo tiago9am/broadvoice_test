@@ -5,7 +5,9 @@ const chrome = require('selenium-webdriver/chrome');
 // Create Chrome options
     let chromeOptions = new chrome.Options();
     let driver = await new Builder().forBrowser('chrome').build();
-    const book_to_find = "O Triunfo dos Porcos"
+    const book_to_find = "O Triunfo dos Porcos";
+    const word_descripton_to_find = "Quinta Manor";
+
     try {
         await driver.get('https://www.leyaonline.com/pt/'); // Go to website
         console.log('Navigated to Leyaonline');
@@ -57,8 +59,16 @@ const chrome = require('selenium-webdriver/chrome');
 
 
 
-
-
+         await driver.wait(until.elementLocated(By.css('section.sinopse')), 10000); 
+         let sectionText = await driver.findElement(By.css('section.sinopse')).getText();
+         console.log('Section text retrieved');
+ 
+         // Check if the section text contains the words "Quinta Manor"
+         if (sectionText.includes(word_descripton_to_find)) {
+             console.log(`Test passed: Section text contains "${word_descripton_to_find}"`);
+         } else {
+             console.log(`Test failed: Section text does not contain "${word_descripton_to_find}"`);
+         }
 
     } catch (error) {
         console.error('An error occurred:', error);
