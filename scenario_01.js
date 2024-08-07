@@ -5,6 +5,7 @@ const chrome = require('selenium-webdriver/chrome');
 // Create Chrome options
     let chromeOptions = new chrome.Options();
     let driver = await new Builder().forBrowser('chrome').build();
+    const term_to_search = "George";
     const book_to_find = "O Triunfo dos Porcos";
     const word_descripton_to_find = "Quinta Manor";
 
@@ -24,8 +25,8 @@ const chrome = require('selenium-webdriver/chrome');
         console.log('Found search bar');
         await driver.sleep(5000);
 
-        await searchBox.sendKeys(book_to_find, Key.RETURN); // Enter submission
-        console.log('Entered search term"',book_to_find,'"and submitted search');
+        await searchBox.sendKeys(term_to_search, Key.RETURN); // Enter submission
+        console.log('Entered search term"',term_to_search,'"and submitted search');
         await driver.sleep(5000); // Wait 5 seconds to load page
 
         let bookTitles = await driver.findElements(By.className('book-title')); // Look for book-title class 
@@ -49,26 +50,25 @@ const chrome = require('selenium-webdriver/chrome');
 
         
         // Click on book title to check description
-        //await driver.sleep(10000);
+        await driver.sleep(10000);
         
         let bookTitleElement = await driver.wait(until.elementLocated(By.xpath(`//h6[@class='book-title' and normalize-space(text())='${book_to_find}']`)), 10000);
         await driver.wait(until.elementIsVisible(bookTitleElement), 5000);
-        
-        await bookTitleElement.click();
+        await driver.executeScript("arguments[0].scrollIntoView(true);", bookTitleElement);
+        await driver.executeScript("arguments[0].click();", bookTitleElement);
+        //await bookTitleElement.click();
         console.log('Clicked on the book title "O Triunfo dos Porcos"');
 
-
-
-         await driver.wait(until.elementLocated(By.css('section.sinopse')), 10000); 
-         let sectionText = await driver.findElement(By.css('section.sinopse')).getText();
-         console.log('Section text retrieved');
+        await driver.wait(until.elementLocated(By.css('section.sinopse')), 10000); 
+        let sectionText = await driver.findElement(By.css('section.sinopse')).getText();
+        console.log('Section text retrieved');
  
-         // Check if the section text contains the words "Quinta Manor"
-         if (sectionText.includes(word_descripton_to_find)) {
-             console.log(`Test passed: Section text contains "${word_descripton_to_find}"`);
-         } else {
-             console.log(`Test failed: Section text does not contain "${word_descripton_to_find}"`);
-         }
+        // Check if the section text contains the words "Quinta Manor"
+        if (sectionText.includes(word_descripton_to_find)) {
+            console.log(`Test passed: Section text contains "${word_descripton_to_find}"`);
+        } else {
+            console.log(`Test failed: Section text does not contain "${word_descripton_to_find}"`);
+        }
 
     } catch (error) {
         console.error('An error occurred:', error);
