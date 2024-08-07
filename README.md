@@ -8,3 +8,6 @@ npm install selenium-webdriver
 
 Install chromedriver package:
 npm install chromedriver
+
+To run scripts:
+node script.js
