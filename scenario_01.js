@@ -5,11 +5,19 @@ const chrome = require('selenium-webdriver/chrome');
 // Create Chrome options
     let chromeOptions = new chrome.Options();
     let driver = await new Builder().forBrowser('chrome').build();
-    let book_to_find = "O Triunfo dos Porcos"
+    const book_to_find = "O Triunfo dos Porcos"
     try {
         await driver.get('https://www.leyaonline.com/pt/'); // Go to website
         console.log('Navigated to Leyaonline');
         await driver.sleep(5000);
+
+        let cookieAcceptButton = await driver.wait(until.elementLocated(By.xpath('//*[@id="cookiescript_accept"]')), 10000);
+        await driver.wait(until.elementIsVisible(cookieAcceptButton), 10000);
+        await driver.wait(until.elementIsEnabled(cookieAcceptButton), 10000);
+
+        await cookieAcceptButton.click(); // Click the cookie consent button
+
+
         let searchBox = await driver.wait(until.elementLocated(By.id('searchbar-large')), 10000); // Check for searchbar 
         console.log('Found search bar');
         await driver.sleep(5000);
@@ -39,11 +47,16 @@ const chrome = require('selenium-webdriver/chrome');
 
         
         // Click on book title to check description
-        await driver.sleep(10000);
-        let bookTitleElement = await driver.findElement(By.xpath(`//h6[@class='book-title' and text()='${book_to_find}']`));
+        //await driver.sleep(10000);
+        
+        let bookTitleElement = await driver.wait(until.elementLocated(By.xpath(`//h6[@class='book-title' and normalize-space(text())='${book_to_find}']`)), 10000);
+        await driver.wait(until.elementIsVisible(bookTitleElement), 5000);
+        
         await bookTitleElement.click();
-        await driver.sleep(444433);
         console.log('Clicked on the book title "O Triunfo dos Porcos"');
+
+
+
 
 
 
